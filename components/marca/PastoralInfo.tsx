@@ -17,9 +17,9 @@ const CONTENIDO: Record<Audiencia, { icon: typeof Users; titulo: string; descrip
     },
     {
       icon: Sparkles,
-      titulo: "Inscripción en línea",
+      titulo: "Inscripción con tu encargado",
       descripcion:
-        "Elige tu club deseado y uno alternativo desde un formulario simple, sin filas ni papeles que llenar.",
+        "Acércate al encargado del club que quieres, dile tu matrícula o nombre y quedas inscrito al instante.",
     },
     {
       icon: CalendarCheck,

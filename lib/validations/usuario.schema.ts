@@ -17,6 +17,15 @@ export const usuarioEncargadoSchema = z.object({
     errorMap: () => ({ message: "Selecciona si el encargado es estudiante o profesor." }),
   }),
   clubId: z.string().min(1, "Selecciona el club que va a dirigir este encargado."),
+  password: z
+    .string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres.")
+    .max(72, "La contraseña es demasiado larga."),
 });
+
+export const passwordSchema = z
+  .string()
+  .min(6, "La contraseña debe tener al menos 6 caracteres.")
+  .max(72, "La contraseña es demasiado larga.");
 
 export type UsuarioEncargadoFormValues = z.infer<typeof usuarioEncargadoSchema>;

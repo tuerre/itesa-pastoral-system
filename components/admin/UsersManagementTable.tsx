@@ -3,10 +3,20 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { Check, Copy, KeyRound, Trash2 } from "lucide-react";
+import { Check, Copy, Eye, EyeOff, KeyRound, Loader2, Shuffle, Trash2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteUsuarioEncargado, resetPasswordEncargado } from "@/lib/actions/users.actions";
 import { TIPO_PERSONA_LABEL } from "@/lib/constants";
+import { generarPassword } from "@/lib/utils";
 import type { Club, Usuario } from "@/types";
 
 interface UsersManagementTableProps {
@@ -29,18 +40,36 @@ interface UsersManagementTableProps {
 
 export function UsersManagementTable({ encargados, clubesMap }: UsersManagementTableProps) {
   const router = useRouter();
-  const [, startTransition] = useTransition();
-  const [nuevaPassword, setNuevaPassword] = useState<{ username: string; password: string } | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [resetTarget, setResetTarget] = useState<Usuario | null>(null);
+  const [nuevaPasswordInput, setNuevaPasswordInput] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [errorPassword, setErrorPassword] = useState<string | null>(null);
+  const [confirmada, setConfirmada] = useState<{ username: string; password: string } | null>(null);
   const [copiado, setCopiado] = useState(false);
 
-  function handleReset(usuario: Usuario) {
+  function abrirReset(usuario: Usuario) {
+    setResetTarget(usuario);
+    setNuevaPasswordInput("");
+    setErrorPassword(null);
+    setMostrarPassword(false);
+  }
+
+  function confirmarReset() {
+    if (!resetTarget) return;
+    if (nuevaPasswordInput.length < 6) {
+      setErrorPassword("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
     startTransition(async () => {
-      const res = await resetPasswordEncargado(usuario.id);
+      const res = await resetPasswordEncargado(resetTarget.id, nuevaPasswordInput);
       if (!res.ok) {
-        toast.error(res.error);
+        setErrorPassword(res.error);
         return;
       }
-      setNuevaPassword({ username: usuario.username, password: res.data.password });
+      setConfirmada({ username: resetTarget.username, password: res.data.password });
+      setResetTarget(null);
+      router.refresh();
     });
   }
 
@@ -57,8 +86,8 @@ export function UsersManagementTable({ encargados, clubesMap }: UsersManagementT
   }
 
   async function copiar() {
-    if (!nuevaPassword) return;
-    await navigator.clipboard.writeText(nuevaPassword.password);
+    if (!confirmada) return;
+    await navigator.clipboard.writeText(confirmada.password);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
   }
@@ -97,7 +126,7 @@ export function UsersManagementTable({ encargados, clubesMap }: UsersManagementT
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" aria-label={`Restablecer contraseña de ${u.nombre}`} onClick={() => handleReset(u)}>
+                    <Button variant="ghost" size="icon" aria-label={`Restablecer contraseña de ${u.nombre}`} onClick={() => abrirReset(u)}>
                       <KeyRound className="h-4 w-4" aria-hidden="true" />
                     </Button>
                     <AlertDialog>
@@ -127,21 +156,82 @@ export function UsersManagementTable({ encargados, clubesMap }: UsersManagementT
         </Table>
       </div>
 
-      <AlertDialog open={!!nuevaPassword} onOpenChange={(v) => !v && setNuevaPassword(null)}>
+      <Dialog open={!!resetTarget} onOpenChange={(v) => !v && setResetTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Restablecer contraseña</DialogTitle>
+            <DialogDescription>
+              Escribe la nueva contraseña para {resetTarget?.nombre}. Debe tener al menos 6 caracteres.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 px-6 py-6">
+            <Label htmlFor="nuevaPassword">Nueva contraseña</Label>
+            <div className="relative">
+              <Input
+                id="nuevaPassword"
+                type={mostrarPassword ? "text" : "password"}
+                value={nuevaPasswordInput}
+                onChange={(e) => {
+                  setNuevaPasswordInput(e.target.value);
+                  setErrorPassword(null);
+                }}
+                invalid={!!errorPassword}
+                placeholder="Mínimo 6 caracteres"
+                className="pr-20"
+              />
+              <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
+                <button
+                  type="button"
+                  onClick={() => setMostrarPassword((v) => !v)}
+                  aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-neutral-800"
+                >
+                  {mostrarPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNuevaPasswordInput(generarPassword());
+                    setMostrarPassword(true);
+                  }}
+                  aria-label="Generar contraseña aleatoria"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-neutral-800"
+                >
+                  <Shuffle className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+            {errorPassword && (
+              <p role="alert" className="text-sm text-destructive">
+                {errorPassword}
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setResetTarget(null)}>
+              Cancelar
+            </Button>
+            <Button type="button" onClick={confirmarReset} disabled={isPending}>
+              {isPending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+              Guardar contraseña
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!confirmada} onOpenChange={(v) => !v && setConfirmada(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Contraseña restablecida</AlertDialogTitle>
-            <AlertDialogDescription>
-              Guarda esta contraseña ahora: no se volverá a mostrar.
-            </AlertDialogDescription>
+            <AlertDialogTitle>Contraseña actualizada</AlertDialogTitle>
+            <AlertDialogDescription>Comparte esta contraseña de forma segura con el encargado.</AlertDialogDescription>
           </AlertDialogHeader>
-          {nuevaPassword && (
+          {confirmada && (
             <div className="mx-6 my-6 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-4 font-mono text-sm dark:border-neutral-700 dark:bg-neutral-900">
               <p>
-                Usuario: <span className="font-semibold">{nuevaPassword.username}</span>
+                Usuario: <span className="font-semibold">{confirmada.username}</span>
               </p>
               <p>
-                Nueva contraseña: <span className="font-semibold">{nuevaPassword.password}</span>
+                Nueva contraseña: <span className="font-semibold">{confirmada.password}</span>
               </p>
             </div>
           )}
@@ -150,7 +240,7 @@ export function UsersManagementTable({ encargados, clubesMap }: UsersManagementT
               {copiado ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
               {copiado ? "Copiado" : "Copiar"}
             </Button>
-            <AlertDialogAction onClick={() => setNuevaPassword(null)}>Listo</AlertDialogAction>
+            <AlertDialogAction onClick={() => setConfirmada(null)}>Listo</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

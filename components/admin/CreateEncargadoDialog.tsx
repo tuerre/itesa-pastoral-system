@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { Check, Copy, Loader2, Plus } from "lucide-react";
+import { Check, Copy, Eye, EyeOff, Loader2, Plus, Shuffle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usuarioEncargadoSchema } from "@/lib/validations/usuario.schema";
 import { createUsuarioEncargado } from "@/lib/actions/users.actions";
+import { generarPassword } from "@/lib/utils";
 import type { Club } from "@/types";
 
 export function CreateEncargadoDialog({ clubes }: { clubes: Club[] }) {
@@ -28,6 +29,8 @@ export function CreateEncargadoDialog({ clubes }: { clubes: Club[] }) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [tipoPersona, setTipoPersona] = useState<"estudiante" | "profesor" | "">("");
   const [clubId, setClubId] = useState("");
+  const [password, setPassword] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
   const [credenciales, setCredenciales] = useState<{ username: string; password: string } | null>(null);
   const [copiado, setCopiado] = useState(false);
 
@@ -35,8 +38,15 @@ export function CreateEncargadoDialog({ clubes }: { clubes: Club[] }) {
     setFieldErrors({});
     setTipoPersona("");
     setClubId("");
+    setPassword("");
+    setMostrarPassword(false);
     setCredenciales(null);
     setCopiado(false);
+  }
+
+  function generarPasswordSugerida() {
+    setPassword(generarPassword());
+    setMostrarPassword(true);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -47,6 +57,7 @@ export function CreateEncargadoDialog({ clubes }: { clubes: Club[] }) {
       username: formData.get("username"),
       tipoPersona: tipoPersona || undefined,
       clubId,
+      password,
     };
     const parsed = usuarioEncargadoSchema.safeParse(raw);
     if (!parsed.success) {
@@ -56,12 +67,14 @@ export function CreateEncargadoDialog({ clubes }: { clubes: Club[] }) {
         username: flat.username?.[0] ?? "",
         tipoPersona: flat.tipoPersona?.[0] ?? "",
         clubId: flat.clubId?.[0] ?? "",
+        password: flat.password?.[0] ?? "",
       });
       return;
     }
     setFieldErrors({});
     formData.set("tipoPersona", tipoPersona);
     formData.set("clubId", clubId);
+    formData.set("password", password);
 
     startTransition(async () => {
       const res = await createUsuarioEncargado(formData);
@@ -138,6 +151,43 @@ export function CreateEncargadoDialog({ clubes }: { clubes: Club[] }) {
                   {fieldErrors.tipoPersona && (
                     <p role="alert" className="mt-1.5 text-sm text-destructive">
                       {fieldErrors.tipoPersona}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="password">Contraseña</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={mostrarPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      invalid={!!fieldErrors.password}
+                      placeholder="Mínimo 6 caracteres"
+                      className="pr-20"
+                    />
+                    <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setMostrarPassword((v) => !v)}
+                        aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-neutral-800"
+                      >
+                        {mostrarPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={generarPasswordSugerida}
+                        aria-label="Generar contraseña aleatoria"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-neutral-800"
+                      >
+                        <Shuffle className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+                  {fieldErrors.password && (
+                    <p role="alert" className="mt-1.5 text-sm text-destructive">
+                      {fieldErrors.password}
                     </p>
                   )}
                 </div>

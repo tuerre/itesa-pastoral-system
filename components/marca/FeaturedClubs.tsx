@@ -70,7 +70,7 @@ export function FeaturedClubs({ clubes }: FeaturedClubsProps) {
       </StaggerContainer>
 
       <div className="mt-12 flex justify-center">
-        <CtaButton href="/inscripcion">Ver todos e inscribirme</CtaButton>
+        <CtaButton href="/#como-funciona">¿Cómo me inscribo?</CtaButton>
       </div>
     </section>
   );

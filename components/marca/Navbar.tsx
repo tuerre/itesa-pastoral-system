@@ -14,7 +14,6 @@ const LINKS = [
   { href: "/#clubes", label: "Clubes" },
   { href: "/#como-funciona", label: "Cómo funciona" },
   { href: "/#noticias", label: "Noticias" },
-  { href: "/inscripcion", label: "Inscripción" },
 ];
 
 export function Navbar() {

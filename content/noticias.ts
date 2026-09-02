@@ -23,15 +23,15 @@ export const NOTICIAS: Noticia[] = [
     titulo: "Abrimos inscripciones para el año escolar 2026",
     fecha: "Agosto 2026",
     resumen:
-      "Ya puedes elegir tu club deseado y uno alternativo desde el formulario en línea. El proceso toma menos de un minuto.",
+      "Acércate al encargado del club que elijas: te inscribe al instante con tu matrícula o tu nombre, sin formularios.",
     cuerpo: [
       "El área de Pastoral del Instituto Técnico Salesiano abre oficialmente el proceso de inscripción a clubes para el año escolar 2026. Todos los estudiantes del instituto participarán en un club durante la hora curricular, acompañados por un encargado responsable de guiar al grupo semana a semana.",
-      "El formulario de inscripción está disponible en línea y solo toma un minuto completarlo: se piden los datos básicos del estudiante (nombre, curso y matrícula) y la elección de un club deseado, más uno alternativo por si el primero llega a su cupo máximo.",
-      "Una vez enviada la solicitud, el encargado de pastoral la revisa y confirma la asignación del estudiante a su club deseado o al alternativo, según la disponibilidad de cupos. La confirmación llega de inmediato al finalizar el formulario.",
+      "La inscripción se hace en persona: cada estudiante se acerca al encargado del club que le interesa, indica su matrícula o su nombre completo y, si hay cupo disponible, queda registrado al instante desde el sistema del encargado.",
+      "No hay formularios que llenar ni solicitudes que esperar — la confirmación es inmediata, en el momento en que el encargado registra al estudiante.",
       "Este año se mantienen los cinco clubes ya conocidos por la comunidad —Coro y Música, Debate y Oratoria, Arte y Pintura, Voleibol y Robótica— cada uno con cupos limitados y un ciclo de trabajo definido para el año escolar.",
     ],
     icono: Megaphone,
-    cta: { label: "Inscribirme ahora", href: "/inscripcion" },
+    cta: { label: "Ver clubes disponibles", href: "/#clubes" },
   },
   {
     slug: "bienvenida-encargados-2026",

@@ -14,14 +14,7 @@ const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      "fixed inset-0 z-50 bg-white sm:bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
-      className,
-    )}
-    {...props}
-  />
+  <DialogPrimitive.Overlay ref={ref} className={cn("fixed inset-0 z-50 bg-black/50", className)} {...props} />
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
@@ -34,9 +27,8 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 flex w-full flex-col overflow-y-auto bg-white duration-200 dark:bg-neutral-950",
-        "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-        "sm:inset-auto sm:left-[50%] sm:top-[50%] sm:max-h-[90vh] sm:w-full sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-3xl sm:border sm:border-gray-100 sm:shadow-2xl dark:sm:border-neutral-800",
+        "fixed left-1/2 top-1/2 z-50 flex max-h-[85vh] w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-3xl border border-gray-100 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-950",
+        "sm:w-full sm:max-w-lg",
         className,
       )}
       {...props}
@@ -54,7 +46,7 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-shrink-0 items-start justify-between gap-4 rounded-t-none border-b border-gray-100 bg-gradient-to-r from-red-700 to-red-900 px-6 py-5 text-left text-white dark:border-neutral-800 sm:rounded-t-3xl",
+      "flex flex-shrink-0 items-start justify-between gap-4 rounded-t-3xl border-b border-gray-100 bg-gradient-to-r from-red-700 to-red-900 px-6 py-5 text-left text-white dark:border-neutral-800",
       className,
     )}
     {...props}

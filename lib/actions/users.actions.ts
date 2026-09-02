@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { usuarioEncargadoSchema } from "@/lib/validations/usuario.schema";
+import { usuarioEncargadoSchema, passwordSchema } from "@/lib/validations/usuario.schema";
 import {
   getUsuarioByUsername,
   getUsuarioById,
@@ -11,7 +11,7 @@ import {
   hashPassword,
 } from "@/lib/db/usuarios";
 import { getClubById, saveClub } from "@/lib/db/clubes";
-import { generarId, generarPassword } from "@/lib/utils";
+import { generarId } from "@/lib/utils";
 import { actionOk, actionError, type ActionResult } from "./types";
 
 async function requirePastoral() {
@@ -33,6 +33,7 @@ export async function createUsuarioEncargado(formData: FormData): Promise<
       username: formData.get("username"),
       tipoPersona: formData.get("tipoPersona"),
       clubId: formData.get("clubId"),
+      password: formData.get("password"),
     });
     if (!parsed.success) {
       return actionError(parsed.error.issues[0]?.message ?? "Revisa los datos del formulario.");
@@ -46,7 +47,7 @@ export async function createUsuarioEncargado(formData: FormData): Promise<
     const club = await getClubById(parsed.data.clubId);
     if (!club) return actionError("El club seleccionado no existe.");
 
-    const password = generarPassword();
+    const password = parsed.data.password;
     const id = generarId("usr");
 
     await saveUsuario({
@@ -96,15 +97,18 @@ export async function deleteUsuarioEncargado(usuarioId: string): Promise<ActionR
   }
 }
 
-export async function resetPasswordEncargado(usuarioId: string): Promise<ActionResult<{ password: string }>> {
+export async function resetPasswordEncargado(usuarioId: string, nuevaPassword: string): Promise<ActionResult<{ password: string }>> {
   try {
     await requirePastoral();
     const usuario = await getUsuarioById(usuarioId);
     if (!usuario) return actionError("El usuario no existe.");
-    const password = generarPassword();
-    await saveUsuario({ ...usuario, passwordHash: hashPassword(password) });
+    const parsed = passwordSchema.safeParse(nuevaPassword);
+    if (!parsed.success) {
+      return actionError(parsed.error.issues[0]?.message ?? "Contraseña inválida.");
+    }
+    await saveUsuario({ ...usuario, passwordHash: hashPassword(parsed.data) });
     revalidatePath("/admin/usuarios");
-    return actionOk({ password });
+    return actionOk({ password: parsed.data });
   } catch (err) {
     return actionError(err instanceof Error ? err.message : "No se pudo restablecer la contraseña.");
   }

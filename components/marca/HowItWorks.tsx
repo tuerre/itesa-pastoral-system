@@ -1,27 +1,27 @@
 "use client";
 
-import { ClipboardEdit, ListChecks, MailCheck } from "lucide-react";
+import { MapPin, UserCheck, Users } from "lucide-react";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/marca/FadeIn";
 import { CtaButton } from "@/components/marca/CtaButton";
 
 const PASOS = [
   {
     numero: "1",
-    icon: ListChecks,
-    titulo: "Elige tu club",
-    descripcion: "Explora los clubes disponibles y selecciona el que más te interese, más uno alternativo por si acaso.",
+    icon: Users,
+    titulo: "Consulta los clubes disponibles",
+    descripcion: "Revisa la lista de clubes en esta página y elige el que más te interese.",
   },
   {
     numero: "2",
-    icon: ClipboardEdit,
-    titulo: "Envía tu solicitud",
-    descripcion: "Completa el formulario con tus datos: nombre, curso y matrícula. Solo toma un minuto.",
+    icon: MapPin,
+    titulo: "Acércate a su encargado",
+    descripcion: "Busca al encargado del club durante la hora curricular y dile tu matrícula o tu nombre.",
   },
   {
     numero: "3",
-    icon: MailCheck,
-    titulo: "Recibe tu confirmación",
-    descripcion: "El encargado de pastoral revisa tu solicitud y te asigna a tu club deseado o al alternativo si está lleno.",
+    icon: UserCheck,
+    titulo: "Quedas inscrito al instante",
+    descripcion: "El encargado te registra en el sistema en el momento — sin formularios ni papeleo.",
   },
 ];
 
@@ -33,7 +33,7 @@ export function HowItWorks() {
           Cómo funciona
         </p>
         <h2 className="text-balance text-[clamp(28px,4vw,40px)] font-semibold tracking-[-0.02em] text-neutral-950 dark:text-white">
-          Inscribirte toma tres pasos
+          Inscribirte toma tres pasos, en persona
         </h2>
       </FadeIn>
 
@@ -61,7 +61,7 @@ export function HowItWorks() {
       </StaggerContainer>
 
       <div className="mt-14 flex justify-center">
-        <CtaButton href="/inscripcion">Comienza tu inscripción</CtaButton>
+        <CtaButton href="/#clubes">Ver clubes disponibles</CtaButton>
       </div>
     </section>
   );

@@ -47,9 +47,10 @@ export function StartNewCycleButton({ club }: { club: Club }) {
         <AlertDialogHeader>
           <AlertDialogTitle>¿Iniciar un nuevo ciclo de &quot;{club.nombre}&quot;?</AlertDialogTitle>
           <AlertDialogDescription>
-            Los {club.miembrosActuales.length} miembro(s) actuales pasarán al historial del club y quedarán fuera de
-            la lista de miembros. El club quedará abierto para nuevas inscripciones (ciclo #
-            {club.cicloActual.numero + 1}). Esta acción no se puede deshacer.
+            Los {club.miembrosActuales.length} miembro(s) actuales saldrán de este club y quedarán{" "}
+            <strong>sin club asignado</strong>, listos para que tú los muevas a otro club o para que cualquier
+            encargado los inscriba directamente en el suyo. El club quedará abierto para nuevas inscripciones
+            (ciclo #{club.cicloActual.numero + 1}). Esta acción no se puede deshacer.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

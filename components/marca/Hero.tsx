@@ -152,15 +152,15 @@ export function Hero({ clubNames }: HeroProps) {
             </h1>
             <p className="mt-4 max-w-xl text-balance text-[13.5px] leading-relaxed text-white/85 sm:text-[15px] lg:mt-5">
               El área de Pastoral acompaña a cada estudiante del instituto en un club durante la hora curricular.
-              Inscríbete en el que más te guste, y si eres encargado, lleva el control de tu grupo en un solo
-              lugar.
+              Acércate al encargado del club que más te guste para inscribirte, y si eres encargado, lleva el
+              control de tu grupo en un solo lugar.
             </p>
             <div className="mt-6 lg:mt-9">
               <a
-                href="/inscripcion"
+                href="/#clubes"
                 className="inline-flex items-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-brand transition-colors hover:bg-white/90"
               >
-                Inscribirme a un club
+                Conoce los clubes disponibles
               </a>
             </div>
 

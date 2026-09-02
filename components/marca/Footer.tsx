@@ -10,7 +10,7 @@ const ENLACES = [
 ];
 
 const ACCESOS = [
-  { href: "/inscripcion", label: "Inscripción a clubes" },
+  { href: "/#como-funciona", label: "Cómo inscribirme" },
   { href: "/login", label: "Acceso de encargados" },
 ];
 

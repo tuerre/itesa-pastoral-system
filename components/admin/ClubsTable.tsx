@@ -59,9 +59,9 @@ export function ClubsTable({ clubes, encargados, onSelect }: ClubsTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Club</TableHead>
-            <TableHead>Encargado</TableHead>
-            <TableHead>Duración</TableHead>
-            <TableHead>Ciclo</TableHead>
+            <TableHead className="hidden sm:table-cell">Encargado</TableHead>
+            <TableHead className="hidden md:table-cell">Duración</TableHead>
+            <TableHead className="hidden md:table-cell">Ciclo</TableHead>
             <TableHead>Miembros</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
@@ -80,17 +80,19 @@ export function ClubsTable({ clubes, encargados, onSelect }: ClubsTableProps) {
                   >
                     {club.nombre}
                   </button>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">{club.duracionMeses <= 4 ? "Ciclo corto" : "Ciclo largo"}</p>
+                  <p className="hidden text-xs text-gray-400 dark:text-gray-500 sm:block">
+                    {club.duracionMeses <= 4 ? "Ciclo corto" : "Ciclo largo"}
+                  </p>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   {encargado ? (
                     <span className="text-sm text-gray-700 dark:text-gray-300">{encargado.nombre}</span>
                   ) : (
                     <Badge variant="warning">Sin encargado</Badge>
                   )}
                 </TableCell>
-                <TableCell className="text-sm text-gray-600 dark:text-gray-400">{club.duracionMeses} meses</TableCell>
-                <TableCell className="text-sm text-gray-600 dark:text-gray-400">Ciclo #{club.cicloActual.numero}</TableCell>
+                <TableCell className="hidden text-sm text-gray-600 dark:text-gray-400 md:table-cell">{club.duracionMeses} meses</TableCell>
+                <TableCell className="hidden text-sm text-gray-600 dark:text-gray-400 md:table-cell">Ciclo #{club.cicloActual.numero}</TableCell>
                 <TableCell>
                   <Badge variant={lleno ? "destructive" : "secondary"}>
                     {club.miembrosActuales.length} / {club.capacidadMaxima}

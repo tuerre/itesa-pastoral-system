@@ -10,19 +10,21 @@ import type { Estudiante } from "@/types";
 interface StudentsTableProps {
   estudiantes: Estudiante[];
   clubPorEstudiante: Map<string, string>;
+  soloSinClub: boolean;
   onSelect: (estudiante: Estudiante) => void;
 }
 
-export function StudentsTable({ estudiantes, clubPorEstudiante, onSelect }: StudentsTableProps) {
+export function StudentsTable({ estudiantes, clubPorEstudiante, soloSinClub, onSelect }: StudentsTableProps) {
   const [busqueda, setBusqueda] = useState("");
 
   const filtrados = useMemo(() => {
+    let base = soloSinClub ? estudiantes.filter((e) => !clubPorEstudiante.has(e.id)) : estudiantes;
     const q = busqueda.trim().toLowerCase();
-    if (!q) return estudiantes;
-    return estudiantes.filter((e) =>
-      `${e.nombre} ${e.apellido} ${e.matricula} ${e.curso}`.toLowerCase().includes(q),
-    );
-  }, [estudiantes, busqueda]);
+    if (q) {
+      base = base.filter((e) => `${e.nombre} ${e.apellido} ${e.matricula} ${e.curso}`.toLowerCase().includes(q));
+    }
+    return base;
+  }, [estudiantes, clubPorEstudiante, soloSinClub, busqueda]);
 
   return (
     <div className="space-y-3">
@@ -41,8 +43,8 @@ export function StudentsTable({ estudiantes, clubPorEstudiante, onSelect }: Stud
           <TableHeader>
             <TableRow>
               <TableHead>Estudiante</TableHead>
-              <TableHead>Curso</TableHead>
-              <TableHead>Matrícula</TableHead>
+              <TableHead className="hidden sm:table-cell">Curso</TableHead>
+              <TableHead className="hidden sm:table-cell">Matrícula</TableHead>
               <TableHead>Club actual</TableHead>
             </TableRow>
           </TableHeader>
@@ -60,8 +62,8 @@ export function StudentsTable({ estudiantes, clubPorEstudiante, onSelect }: Stud
                       {e.nombre} {e.apellido}
                     </button>
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600 dark:text-gray-400">{e.curso}</TableCell>
-                  <TableCell className="text-sm text-gray-600 dark:text-gray-400">{e.matricula}</TableCell>
+                  <TableCell className="hidden text-sm text-gray-600 dark:text-gray-400 sm:table-cell">{e.curso}</TableCell>
+                  <TableCell className="hidden text-sm text-gray-600 dark:text-gray-400 sm:table-cell">{e.matricula}</TableCell>
                   <TableCell>
                     {clubNombre ? (
                       <span className="text-sm text-gray-700 dark:text-gray-300">{clubNombre}</span>
